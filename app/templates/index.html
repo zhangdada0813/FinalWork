@@ -1,0 +1,224 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主页</title>
+    <!-- CSS only -->
+    <link href="{{ url_for('static',filename='bootstrap.min.css') }}" rel="stylesheet"  >
+{#    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rTTiRUKnSWaDu2FjhzWFl8/JuUZMlplyWE/djenb2LoKqkgLGfEGfSrL7XDLoB1M" crossorigin="anonymous">#}
+    <!-- jQuery and JavaScript Bundle with Popper -->
+    <script src="{{ url_for('static',filename='jquery-3.5.1.min.js') }}"  crossorigin="anonymous"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="{{ url_for('static',filename='bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
+    <div class="container-fluid  justify-content-center">
+      <a class="navbar-brand ml-3" href="/">校园直采</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">价格更新(默认地址)</a>
+          </li>
+        
+          <li class="nav-item">
+            <a class="nav-link" href="/shelf_update">货物上架(默认地址)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quote">获取报价(测试中)</a>
+          </li>
+
+
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+    <div class="container-lg">
+        <form class="row g-3 mt-2" action="{{url_for('index')}}" method="post">
+           
+            <div class="col-auto">
+              <label for="shop_name" class="visually-hidden">商铺名字</label>
+              <input type="text" class="form-control" id="shop_name"name="shop_name" placeholder="{{shop_name}}" value="{{ shop_name_init }}">
+            </div>
+             <div class="col-auto">
+              <label for="price_offset" class="visually-hidden">差价</label>
+              <input type="text" class="form-control" id="price_offset" name="price_offset" placeholder="{{offset}}" value="{{ offset_init }}">
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary mb-3">查询</button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-success mb-3" id="update">一键改价</button>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-success mb-3" id="local_upate">本店数据更新</button>
+            </div>
+             <div class="col-auto">
+                <button type="button" class="btn btn-success mb-3" id="target_shop_update">本店对应店铺更新</button>
+            </div>
+          </form>
+        <button class="btn btn-primary" type="button">
+            共 <span class="badge">{{total_record}} </span>条 上架商品
+        </button>
+         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">
+            商店ID与商店名称对照表(默认地址店铺)
+        </button>
+
+
+        <!-- Modal -->
+        <div class="modal modal-dialog modal-dialog-scrollable " id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="200"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">店铺明细</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">shop_no</th>
+                                    <th scope="col">shop_name</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for shop in shop_results %}
+                                <tr>
+                                    <th scope="row">{{shop.shop_no}}</th>
+                                    <td>{{shop.shop_name}}</td>
+
+                                </tr>
+                              {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Understood</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th scope="col">商品编号</th>
+                <th scope="col">商品类目</th>
+                <th scope="col">商品名称</th>
+                <th scope="col">商品别名</th>
+                <th scope="col">商品单位</th>
+                <th scope="col">商品分类</th>
+                <th scope="col">商品价格更新时间</th>
+             
+                <th scope="col">本店铺当前价格</th>
+                <th scope="col">参考店铺价格</th>
+                <th scope="col">更新后价格</th>
+
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in results %}
+            <tr class="table-item">
+                <th scope="row">{{item.goods_no}}</th>
+                <td>{{item.catalogue_name}}</td>
+                <td>{{item.goods_name}}</td>
+                <td>{{item.goods_alias}}</td>
+                <td>{{item.goods_unit}}</td>
+                <td>{{item.goods_type_name}}</td>
+                <td>{{item.price_update_time}}</td>
+              
+                <td>{{item.sell_price}}</td>
+                <td>{{item.update_price}}</td>
+                <td class="price_after_update">{{item.price_after_update}}</td>
+
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+</body>
+<script>
+    var button = document.getElementById("update");
+    var trs = document.querySelectorAll("tr.table-item");
+    var total_num = document.querySelector(".badge").textContent;
+    var local_update_button = document.querySelector("#local_upate");
+    var target_shop_update_button = document.querySelector("#target_shop_update");
+
+
+    data = {}
+    for(let i=0 ;i<trs.length;i++){
+        tr = trs[i];
+        goods_no = tr.firstElementChild.textContent
+        price_after_update = tr.lastElementChild.textContent
+        data[goods_no] = price_after_update
+    }
+    function local_update(){
+        var xhr = new XMLHttpRequest()
+        var url = "http://127.0.0.1:5000/spider"
+        xhr.open('GET',url)
+        {#xhr.setRequestHeader("Content-type","applications/json;charset=utf8");#}
+        {#xhr.send(JSON.stringify(data))#}
+        xhr.send()
+        xhr.onreadystatechange = function(){
+            if (xhr.readyState === 4 && xhr.status === 200){
+                alert(xhr.responseText);
+            }
+        }
+    }
+    function send_price(){
+        trs = document.querySelectorAll("tr.table-item")
+        total_num = document.querySelector(".badge").textContent
+
+        data = {}
+        for(let i=0 ;i<trs.length;i++){
+            tr = trs[i];
+            goods_no = tr.firstElementChild.textContent
+            price_after_update = tr.lastElementChild.textContent
+            data[goods_no] = price_after_update
+        }
+        var xhr = new XMLHttpRequest()
+        var url = "http://127.0.0.1:5000/update"
+        xhr.open('POST',url)
+        xhr.setRequestHeader("Content-type","applications/json;charset=utf8");
+        xhr.send(JSON.stringify(data))
+        xhr.onreadystatechange = function(){
+            if (xhr.readyState === 4 && xhr.status === 200){
+                alert(xhr.responseText)
+            }
+        }
+    }
+
+    function target_shop_update(){
+        var xhr = new XMLHttpRequest()
+        var url = "http://127.0.0.1:5000/target_shop"
+        xhr.open('GET',url)
+        {#xhr.setRequestHeader("Content-type","applications/json;charset=utf8");#}
+        {#xhr.send(JSON.stringify(data))#}
+        xhr.send()
+        xhr.onreadystatechange = function(){
+            if (xhr.readyState === 4 && xhr.status === 200){
+                alert(xhr.responseText);
+            }
+        }
+    }
+    button.addEventListener("click",send_price)
+    local_update_button.addEventListener("click",local_update)
+    target_shop_update_button.addEventListener("click",target_shop_update)
+    // console.log(tds)
+</script>
+
+</html>

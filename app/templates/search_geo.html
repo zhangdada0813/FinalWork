@@ -1,0 +1,273 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查询主页</title>
+    <!-- CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" rel="stylesheet"  crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"  crossorigin="anonymous"></script>
+</head>
+<body>
+   <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
+    <div class="container-fluid  justify-content-center">
+      <a class="navbar-brand ml-3" href="/">校园直采</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">价格更新(默认地址)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quote">获取报价(默认地址)</a>
+          </li><li class="nav-item">
+            <a class="nav-link" href="/shelf_update">货物上架(默认地址)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dynamic">价格更新(动态地址)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/geo">获取报价(动态地址)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/geo_shelf">货物上架(动态地址)</a>
+          </li>
+
+
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+    <div class="container">
+
+         <button class="btn btn-primary" type="button">
+            当前数据基于 坐标 <span class="badge">{{coordinat_using}} </span>
+        </button>
+        <form action="{{url_for('quote_with_geo')}}" id="form_update" method="post">
+
+<!--        <div class="row"><button type="button" data-toggle="modal" data-target="#staticBackdrop" class="btn btn-success btn-lg btn btn-block mb-3 mt-5" id="check_quote">查看已选</button></div>-->
+        </form>
+        <div class="row"><button type="button" data-toggle="modal" data-target="#staticBackdrop" class="btn btn-success btn-lg btn btn-block mb-3 mt-5" id="check_quote">查看已选</button></div>
+        <div class="modal " id="staticBackdrop"  data-keyboard="false" tabindex="200"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg  modal-dialog-scrollable modal-dialog-centered ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">已选商品</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">商品编号</th>
+                                    <th scope="col">商品名称</th>
+                                    <th scope="col">商品类别</th>
+                                    <th scope="col">商品数量</th>
+
+                                </tr>
+                            </thead>
+                            <tbody class="quote_table">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close_button">关闭</button>
+                        <button type="submit" class="btn btn-primary" id="update_quote" form="form_update" >确认报价</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="left col-4 mt-5">
+
+                <div class="list-group" id="list-tab" role="tablist">
+                    {% for cate in results %}
+                    {% if cate['catalogue_name']=="水产（集采）" %}
+                    <a class="list-group-item list-group-item-action active" id="list-{{cate['catalogue_name']}}-list" data-toggle="list" href="#list-{{cate['catalogue_name']}}" role="tab" aria-controls="home">{{cate['catalogue_name']}}</a>
+                    {% else %}
+                    <a class="list-group-item list-group-item-action" id="list-{{cate['catalogue_name']}}-list" data-toggle="list" href="#list-{{cate['catalogue_name']}}" role="tab" aria-controls="home">{{cate['catalogue_name']}}</a>
+                    {% endif %}
+                    {% endfor %}
+                  </div>
+            </div>
+            <div class="right col-8">
+
+                <div class="tab-content" id="nav-tabContent">
+                    {% for item,value in cate_result.items() %}
+                    {% if value['first_page']=="true" %}
+                    <div class="tab-pane fade show active" id="list-{{item}}" role="tabpanel" aria-labelledby="list-home-list">
+                        <table class="table mt-5 table-striped table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">商品编号</th>
+                        <th scope="col">商品名称</th>
+                        <th scope="col">类别名称</th>
+                        <th scope="col">数量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in value['item'] %}
+                    <tr class="item">
+
+                        <td>{{item.goods_no}}</td>
+                        <td>{{item.goods_name}}</td>
+                        <td>{{item.catalogue_name}}</td>
+
+                        <td><input type="number" placeholder="输入数量" name="{{ item.goods_no }}"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+                    </div>
+                   {% else %}
+                    <div class="tab-pane fade" id="list-{{item}}" role="tabpanel" aria-labelledby="list-profile-list">
+                         <table class="table mt-5">
+                <thead>
+                    <tr>
+                        <th scope="col">商品编号</th>
+                        <th scope="col">商品名称</th>
+                        <th scope="col">类别名称</th>
+                        <th scope="col">数量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in value['item'] %}
+                    <tr class="item">
+
+                        <td>{{item.goods_no}}</td>
+                        <td>{{item.goods_name}}</td>
+                        <td>{{item.catalogue_name}}</td>
+
+                        <td><input type="number" placeholder="输入数量" name="{{ item.goods_no }}"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+                    </div>
+                     {% endif %}
+                    {% endfor %}
+                  </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+<script>
+    var check_button = document.querySelector("#check_quote");
+    var update_button_in_modal  = document.querySelector("#update_quote");
+    var close_button = document.querySelector("#close_button");
+    var spider_control = document.querySelector("#spider_control");
+    function get_quote(){
+        let trs = document.querySelectorAll(".quote_table .modal_item");
+        data = {}
+        for(let i=0;i<trs.length;i++){
+            tr = trs[i]
+            if (parseInt(tr.lastElementChild.firstElementChild.value)>0){
+                goods_no = tr.firstElementChild.textContent;
+                data[goods_no] = parseInt(tr.lastElementChild.firstElementChild.value)
+            }
+        }
+        var xhr = new XMLHttpRequest();
+        url = "http://127.0.0.1:5000/quote"
+        xhr.open("POST",url)
+        xhr.setRequestHeader("Content-type","applications/json;charset=utf8");
+        xhr.send(JSON.stringify(data))
+        xhr.onreadystatechange = function (){
+            if (xhr.readystate === 4 && xhr.status===200){
+                alert("更新成功")
+            }
+        }
+    }
+    function check_quote(){
+        var trs = document.querySelectorAll(".item");
+        console.log(trs)
+        data = []
+        for(let i=0;i<trs.length;i++){
+            item = {}
+            tr = trs[i]
+            if (parseInt(tr.lastElementChild.firstElementChild.value)>0){
+                goods_no = tr.firstElementChild.textContent;
+                item["goods_no"] =goods_no
+                item['goods_name'] = tr.children[1].textContent
+                item['category_name'] = tr.children[2].textContent
+                item['value'] =parseInt(tr.lastElementChild.firstElementChild.value)
+                data.push(item)
+            }
+        }
+        var output = ""
+        for(let j=0;j<data.length;j++){
+            item = data[j]
+
+            td = "<tr class='modal_item'><td>"
+            td += item.goods_no + "</td>"
+            td += "<td>" + item.goods_name +"</td>"
+            td += "<td>" + item.category_name +"</td>"
+            console.log(item.value)
+            td += "<td>" + "<input type='number' form='form_update' value="+item.value+" name='"+item.goods_no+"'></td></tr>"
+            output += td
+        }
+        let tbody = document.querySelector(".quote_table");
+        tbody.innerHTML = output
+    }
+    function update_quote() {
+        var modal_trs = document.querySelectorAll(".quote_table .modal_item");
+
+        modal_data = []
+        console.log("update_quote running")
+        for (let i = 0; i < modal_trs.length; i++) {
+            item = {}
+            let tr = modal_trs[i]
+            if (parseInt(tr.lastElementChild.firstElementChild.value) > 0) {
+                goods_no = tr.firstElementChild.textContent;
+                name_attr = ".item [name='" + goods_no + "']"
+                element = document.querySelector(name_attr)
+                {#console.log(element)#}
+                item["goods_no"] = goods_no
+                item['goods_name'] = tr.children[1].textContent
+                item['category_name'] = tr.children[2].textContent
+                item['value'] = parseInt(tr.lastElementChild.firstElementChild.value)
+                {#console.log(item['value'])#}
+                element.value = item['value']
+
+            }
+
+
+        }
+    }
+    function send_coordinate(){
+        console.log("spider control running")
+        let geo_input = document.querySelector("#geo");
+        let coordinate = geo_input.value;
+        if(! coordinate || coordinate.indexOf(",")<0){alert("坐标格式不正确");return}
+
+        coordate_list = coordinate.split(",");
+        lagitude =  parseFloat(coordate_list[0])
+        longotude = parseFloat(coordate_list[1])
+        if (typeof lagitude != "number" || typeof longotude != "number"){alert("坐标应为数字");return}
+        if (coordate_list.length != 2 || coordate_list[0] < 0 || coordate_list[0]>90) {alert("坐标格式不正确,纬度在前范围为0~90,经度在后,范围为0-180");return}
+        xhr = new XMLHttpRequest();
+        url = "http://127.0.0.1:5000/geo"
+        xhr.open("POST",url)
+        xhr.send(coordinate);
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4 && xhr.status==200){
+                alert("正在抓取 可配送到 "+coordinate+"的店铺")
+            }
+        }
+
+    }
+    close_button.addEventListener("click",update_quote)
+    {#update_button_in_modal.addEventListener("click",get_quote)#}
+    check_button.addEventListener("click",check_quote);
+    spider_control.addEventListener("click",send_coordinate)
+</script>
+</html>
