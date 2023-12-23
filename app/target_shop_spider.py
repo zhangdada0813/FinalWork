@@ -123,14 +123,19 @@ class TargetShopSpider(feapder.AirSpider):
 
     def parse_target_shop(self,request,response):
 
-        target_shop_name = ['江苏天天美味餐饮有限公司','泗阳联创农业发展有限公司','江苏午硕生态农业发展有限公司','宿迁硕品商贸有限公司','泗阳金易采商贸有限公司','宿迁市泽青生鲜配送有限公司']
+        target_shop_name = ['江苏天天美味餐饮有限公司','泗阳联创农业发展有限公司','江苏午硕生态农业发展有限公司',
+                            '宿迁硕品商贸有限公司','泗阳金易采商贸有限公司','宿迁市泽青生鲜配送有限公司','宿迁市进奎食品有限公司',
+                            '江苏五鲜供应链管理有限公司','泗阳富禄德食品商贸有限公司','江苏京盛原网络科技有限公司',
+                            '泗阳优家餐饮配送有限公司','宿迁桃李生鲜配送有限公司','宿迁菜鸟生鲜配送有限公司',
+                            '宿迁东时代农业发展有限公司','宿迁市大举商贸有限公司','江苏永态农副产品有限公司','泗阳久恒生鲜配送有限公司','泗阳县百春锦蔬菜专业合作社','泗阳广源健康食品有限公司'
+                            ]
         result = response.json['result']
 
         pages = result['pages']
         current_page = request.page
         for shop in result['list']:
-            if shop.get('shop_name','') not in target_shop_name:
-                continue
+            # if shop.get('shop_name','') not in target_shop_name:
+            #     continue
             item = {}
             item['shop_no'] = shop.get('shop_no','')
             item['shop_name'] = shop.get('shop_name','')

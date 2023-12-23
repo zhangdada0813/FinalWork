@@ -63,7 +63,7 @@ class TokenManager():
             "token": "undefined",
             "source": "1"
         }
-        with open("C:\\Users\\admin\\Desktop\\privateTools-main\\app\\utils\\loader.js", encoding="utf-8") as fin:
+        with open("E:\\python\\spider\\FinalWork\\app\\utils\\loader.js", encoding="utf-8") as fin:
             js_text = fin.read()
         context1 = execjs.compile(js_text)
         account_list = self.config.pc_account_list

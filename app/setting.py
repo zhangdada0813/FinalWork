@@ -1,8 +1,8 @@
 MYSQL_CONN = {
     "ip":"localhost",
     "port":3306,
-    "user_name":"school",
-    "user_pass":"Zyw0813",
+    "user_name":"mike",
+    "user_pass":"zyw08135932",
     "db":"price_compare"
 }
 

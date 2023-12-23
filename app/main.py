@@ -453,10 +453,10 @@ def update():
         print(to_update_data)
         token = tm.generate_random_pc_token()
         with ThreadPoolExecutor(max_workers=15) as executor:
-            executor.map(update_price,)
-        for goods_no, price in to_update_data.items():
-            update_price(goods_no, price, token)
-        message = "价格更新中"
+            future_to_update = [executor.submit(update_price,goods_no,price,token=token) for goods_no,price in to_update_data.items()]
+        # for goods_no, price in to_update_data.items():
+        #     update_price(goods_no, price, token)
+        message = "价格更新完毕"
         res = make_response(message)
 
         return res
